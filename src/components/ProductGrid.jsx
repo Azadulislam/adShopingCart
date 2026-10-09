@@ -1,8 +1,12 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import ProductCard from './ProductCard';
+import ProductDetails from './ProductDetails';
+import { useCart } from '../context/useCart';
 import './ProductGrid.css';
 
 function ProductGrid({ products }) {
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { addToCart } = useCart();
   const categories = useMemo(() => {
     if (!products) return [];
     const unique = Array.from(new Set(products.map((p) => p.category)));
@@ -38,9 +42,20 @@ function ProductGrid({ products }) {
 
       <div className="product-grid">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onViewDetails={setSelectedProduct}
+          />
         ))}
       </div>
+      {selectedProduct && (
+        <ProductDetails
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onAddToCart={addToCart}
+        />
+      )}
     </section>
   );
 }
